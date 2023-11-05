@@ -23,19 +23,20 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.save(account);
     }
     @Override
-    public  Account getAccountById(int id){
+    public  Account getAccountById(Long id){
         return accountRepository.findById(id).get();
     }
     @Override
-    public  List<Account> getAllAccounts(){
+    public List<Account> getAllAccounts(){
         return (List<Account>) accountRepository.findAll();
     }
     @Override
-    public  void deleteAccount(int id){
+    public  void deleteAccount(Long id){
         accountRepository.deleteById(id);
     }
     @Override
-    public  boolean isAccountExist(int id){
+    public  boolean isAccountExist(Long id){
         return accountRepository.existsById(id);
     }
+
 }

@@ -12,7 +12,7 @@
 	<artifactId>database</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>database</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Backend for the startup CookGuide, from SocialTech</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -31,8 +31,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

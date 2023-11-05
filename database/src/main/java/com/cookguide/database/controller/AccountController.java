@@ -1,71 +1,85 @@
 package com.cookguide.database.controller;
 
-import com.cookguide.database.exception.ResourceNotFoundException;
 import com.cookguide.database.exception.ValidationException;
 import com.cookguide.database.model.Account;
-import com.cookguide.database.model.Health_info;
-import com.cookguide.database.model.Preference;
 import com.cookguide.database.repository.AccountRepository;
-import com.cookguide.database.repository.HealthInfoRepository;
-import com.cookguide.database.repository.PreferenceRepository;
-import com.cookguide.database.service.AccountService;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/login/v1")
-
-public class AccountController{
+public class AccountController {
     @Autowired
-    private AccountService accountService;
+    private AccountRepository accountRepository;
 
-    private final AccountRepository accountRepository;
-    private final HealthInfoRepository healthInfoRepository;
-    private final PreferenceRepository preferenceRepository;
-
-    public AccountController(PreferenceRepository preferenceRepository, HealthInfoRepository healthInfoRepository, AccountRepository accountRepository) {
-        this.preferenceRepository = preferenceRepository;
-        this.healthInfoRepository = healthInfoRepository;
-        this.accountRepository = accountRepository;
-    }
-
-    //URL: http://localhost:8080/api/login/v1/accounts/1
-    //METHOD: POST
+    @Transactional
+    @PostMapping("/accounts")
     public ResponseEntity<Account> createAccount(@RequestBody Account account)
     {
-        // Crear nuevas preferencias y guardar en la base de datos
-        Preference newPreference = new Preference(/* Agregar aquí los atributos de la preferencia */);
-        Preference savedPreference = preferenceRepository.save(newPreference);
-
-        // Crear nueva información de salud y guardar en la base de datos
-        Health_info newHealthInfo = new Health_info(/* Agregar aquí los atributos de la información de salud */);
-        Health_info savedHealthInfo = healthInfoRepository.save(newHealthInfo);
-
-        // Asignar las nuevas preferencias y la nueva información de salud a la cuenta
-        account.setPreference(savedPreference);
-        account.setHealthInfo(savedHealthInfo);
-
-        // Guardar la cuenta con las nuevas preferencias y la nueva información de salud asignadas
+        validateAccount(account);
         Account savedAccount = accountRepository.save(account);
         return ResponseEntity.ok(savedAccount);
     }
+    @GetMapping("/accounts/{id}")
+    public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
+        Optional<Account> account = accountRepository.findById(id);
+        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/accounts/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+        if (accountRepository.existsById(id)) {
+            accountRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/accounts/{id}")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account updatedAccount) {
+        Optional<Account> existingAccount = accountRepository.findById(id);
+        if (existingAccount.isPresent()) {
+            // Cambio de Nombres, Dieta, Fecha de Cumpleaños y Numero
+            Account account = existingAccount.get();
+            account.setFirstName(updatedAccount.getFirstName());
+            account.setLastName(updatedAccount.getLastName());
+            account.setDiet(updatedAccount.getDiet());
+            account.setBirthday(updatedAccount.getBirthday());
+            account.setPhone(updatedAccount.getPhone());
+
+            // Ejemplo: account.setNombre(updatedAccount.getNombre());
 
 
-    //Aqui se establecen las validaciones al momento de crear una entidad "Account".
+            Account savedAccount = accountRepository.save(account);
+            return ResponseEntity.ok(savedAccount);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
     private void validateAccount(Account account){
         String emailRegex = "^[A-Za-z0-9_-]+@(gmail\\.com|yahoo\\.com|outlook\\.com)$";
-        // Validación de Dominios y nombres erroneos->
+
         if (!account.getUserEmail().matches(emailRegex)) {
             throw new ValidationException("Invalid Email or domain not allowed");
         }
         if (account.getFirstName().length() > 100){
             throw new ValidationException("Maximun limit of characters");
         }
-        // Faltan más validaciones
+
     }
+
+
+
 
 }

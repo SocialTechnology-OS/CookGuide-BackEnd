@@ -1,23 +1,26 @@
 package com.cookguide.database.model;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "accounts")
 public class Account {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private int uid;
+    @GeneratedValue( strategy = GenerationType.SEQUENCE)
+    private Long uid;
 
     @Column( name = "firstName", length = 100, nullable = false)
     private String firstName;
@@ -34,6 +37,26 @@ public class Account {
     @Column( name = "userType", nullable = false)
     private boolean userType;
 
+    @Column(name = "birthday", nullable = false)
+    private LocalDate birthday;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Column(name = "DNI", nullable= false)
+    private int DNI;
+
+    @Column(name = "gender", nullable = false)
+    private String gender;
+
+    @Column(name = "diet", nullable = false)
+    private String diet;
+
+    @Column(name = "picture", nullable = false)
+    private String picture;
+
+
+    /*
     @OneToOne
     @JoinColumn(name = "healthId", nullable = false
     , foreignKey = @ForeignKey(name = "fkHealthID"))
@@ -45,6 +68,6 @@ public class Account {
             , foreignKey = @ForeignKey(name = "fkPreferenceId"))
     @JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
     private Preference preference;
-
+    */
 
 }

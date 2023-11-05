@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 public class Health_info {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private int uid;
+    private Long uid;
 
     @Column(name = "imc", nullable = false)
     private int imc;
 
-    @Column(name = "weight", columnDefinition = "FLOAT(5,2)", nullable = false)
+    @Column(name = "weight", nullable = false)
     private float weight;
 
-    @Column(name = "height", columnDefinition = "FLOAT(5,2)", nullable = false)
+    @Column(name = "height", nullable = false)
     private float height;
 }
